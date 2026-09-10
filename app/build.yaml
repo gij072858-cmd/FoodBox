@@ -1,0 +1,15 @@
+# Drift 构建配置
+#
+# store_date_time_values_as_text: 让 DateTime 以 ISO-8601 文本落库。
+# 默认（整数时间戳）读出来是 UTC，跨时区展示会差若干小时；
+# 文本存储保留时区信息，`DateTime` 的本地时间语义与 Dart 侧一致。
+# 详见《接口约定.md》2.7 数据层技术决策。
+targets:
+  $default:
+    builders:
+      drift_dev:
+        options:
+          store_date_time_values_as_text: true
+          named_parameters: true
+          sql:
+            dialect: sqlite

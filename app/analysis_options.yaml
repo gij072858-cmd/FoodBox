@@ -1,0 +1,22 @@
+# 静态检查规则（全组统一，PR Review 会对照检查）
+#
+# 基础规则来自 flutter_lints；下面追加的是本项目明确要求的编码纪律。
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # 统一使用单引号（与《GitHub 协作指南》示例代码一致）
+    prefer_single_quotes: true
+    # 禁止把调试输出留在提交里，调试请用 debugPrint
+    avoid_print: true
+    # 中文注释里的 TODO 必须带负责人，便于追踪
+    # （规则本身由 code review 保障，此处仅作占位说明）
+
+analyzer:
+  errors:
+    # 生成文件中常见的告警不要阻断 CI
+    todo: ignore
+  exclude:
+    - build/**
+    - android/**
+    - windows/**
