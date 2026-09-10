@@ -1,0 +1,26 @@
+# ---- 编辑器 / 工具目录 ----
+.trae/
+.idea/
+.vscode/
+*.iml
+
+# ---- 操作系统 ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- 密钥与本地环境（红线：绝不提交）----
+.env
+.env.*
+*.keystore
+*.jks
+key.properties
+google-services.json
+GoogleService-Info.plist
+
+# ---- 临时文件 ----
+*.log
+*.tmp
+~$*
+
+# 说明：Flutter 工程内部产物（.dart_tool/、build/ 等）由 app/.gitignore 负责
