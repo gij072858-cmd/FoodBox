@@ -1,0 +1,11 @@
+# 行尾约定
+#
+# 本项目在 Windows 上开发，且 app/assets/data/*.json 是**生成物**
+# （由 tool/import_food_items.dart 从整理表生成，输出 LF）。
+# 若不给这些数据文件固定行尾，core.autocrlf=true 会让生成的 JSON
+# 在 git status 里恒显示「已修改」，容易误提交噪声。
+#
+# 因此：预置数据与整理表统一按 LF 入库与检出。
+
+app/assets/data/*.json text eol=lf
+docs/数据/*.csv text eol=lf
