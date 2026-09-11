@@ -39,7 +39,7 @@ class FbBadge extends StatelessWidget {
       child: Text(
         text,
         style: FBTextStyle.micro.copyWith(
-          color: Colors.white,
+          color: FBColor.textInverse,
           fontWeight: FontWeight.w600,
         ),
       ),

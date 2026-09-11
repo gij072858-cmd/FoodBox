@@ -6,7 +6,7 @@ import '../../core/theme.dart';
 import '../../widgets/fb_animations.dart';
 import '../../widgets/fb_glass_container.dart';
 
-/// 底部导航承载壳（v3.0 精修版）
+/// 底部导航承载壳（v2.1）
 ///
 /// - 三段式「首页 / 动态 / 我的」，毛玻璃质感；
 /// - 激活态：底部滑动指示胶囊 + 图标弹跳 + 文字加粗；

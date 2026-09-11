@@ -57,7 +57,7 @@ class PantryTabPage extends StatelessWidget {
                         value: '5',
                         label: '临期',
                         color: FBColor.warning,
-                        bgColor: const Color(0x1FFF9500),
+                        bgColor: FBColor.warningLight,
                       ),
                       const SizedBox(width: FBSpace.sm),
                       _StatCard(

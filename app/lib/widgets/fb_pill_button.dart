@@ -71,7 +71,7 @@ class FbPillButton extends StatelessWidget {
   Color get _foreground {
     switch (variant) {
       case FbPillVariant.primary:
-        return Colors.white;
+        return FBColor.textInverse;
       case FbPillVariant.secondary:
         return FBColor.textPrimary;
       case FbPillVariant.ghost:

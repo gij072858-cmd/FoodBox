@@ -138,14 +138,7 @@ class FbHeroCard extends StatelessWidget {
               image ??
                   Container(
                     decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: <Color>[
-                          Color(0xFFFFB199),
-                          Color(0xFFFF6B4D),
-                        ],
-                      ),
+                      gradient: FBGradient.heroFallback,
                     ),
                   ),
               Container(

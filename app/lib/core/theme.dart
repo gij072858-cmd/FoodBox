@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 /// ===========================================================================
-/// 食匣 FoodBox 设计系统常量（v3.0 Apple 精修 · 美食氛围版）
+/// 食匣 FoodBox 设计系统常量（v2.0 Apple 毛玻璃 · 美食氛围版）
 ///
 /// 依据：Apple Design Library + 食匣品牌红 + 食物温暖氛围。
 ///
@@ -11,13 +11,17 @@ import 'package:flutter/services.dart';
 ///   1. 禁止在页面里硬编码色值、圆角、字号、间距 —— 一律引用本文件常量；
 ///   2. 期2 深色模式（F5）能做到"零重构上线"，唯一前提就是这条纪律。
 ///
-/// 变更摘要（v3.0）：
-///   - 色彩深度升级：加入暖色渐变、食物灵感点缀色、光晕效果色；
-///   - 渐变系统：背景渐变、卡片渐变、品牌渐变、蒙版渐变；
-///   - 动效系统：完整的时长/曲线/错位 tokens，含入口、反馈、过渡三层；
-///   - 阴影层次扩充：新增 cardHover、cardPressed、glow、inner；
-///   - 字体新增 display（34px Heavy）与数字等宽样式，Hero 时刻更有冲击力；
-///   - 新增 FBGrain / FBBg 背景氛围工具，让页面有呼吸感而非纯平。
+/// 版本口径（与 docs/ 保持一致，**不要在本文件另起版本号**）：
+///   - **v2.0**：Apple 毛玻璃设计系统 —— 色彩 / 渐变 / 圆角 / 字体 / 间距 / 阴影 / 毛玻璃；
+///   - **v2.1**：动效系统 —— `FBMotion` 时长曲线常量 + `widgets/fb_animations.dart` 组件。
+///
+/// v2.1 变更摘要：
+///   - 动效系统：时长 / 曲线 / 错位 tokens 三层齐备（入口、反馈、过渡），全部收敛到 [FBMotion]；
+///   - 色彩深度升级：暖色渐变、食物灵感点缀色、光晕效果色；
+///   - 渐变系统：[FBGradient] 提供品牌 / 暖色 / 蒙版 / 进度 / Hero 兜底等预设；
+///   - 阴影层次扩充：[FBShadow] 新增 cardHover、cardPressed、brandGlow、hero；
+///   - 字体新增 display（34px Heavy）与数字等宽样式 [FBTextStyle.numberDisplay]；
+///   - 背景氛围色：[FBColor.glowWarm] / [FBColor.glowBrand] / [FBColor.glowFresh]，配 [FBGradient.heroGlow] 使用。
 /// ===========================================================================
 
 /// 色彩系统
@@ -101,6 +105,9 @@ abstract final class FBColor {
   /// 预警
   static const Color warning = Color(0xFFFF9500);
 
+  /// 预警浅底（图标衬底、提示条背景）
+  static const Color warningLight = Color(0x1FFF9500);
+
   /// 危险
   static const Color danger = Color(0xFFE23B25);
 
@@ -165,6 +172,20 @@ abstract final class FBGradient {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: <Color>[Color(0xFFFFF7F2), Color(0xFFFFE8DE)],
+  );
+
+  /// 暖色 Hero 渐变（我的页身份区等，比 [warm] 更饱和）
+  static const LinearGradient warmHero = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: <Color>[Color(0xFFFFF0E8), Color(0xFFFFE0D0)],
+  );
+
+  /// Hero 卡片缺图时的兜底渐变（暖橙），替代加载失败或未提供的图片
+  static const LinearGradient heroFallback = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: <Color>[Color(0xFFFFB199), Color(0xFFFF6B4D)],
   );
 
   /// Hero 卡片渐变蒙版（从下往上加深）

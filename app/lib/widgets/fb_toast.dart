@@ -22,7 +22,7 @@ class FbToast {
         ),
         padding: const EdgeInsets.symmetric(vertical: FBSpace.sm, horizontal: FBSpace.md),
         shape: const RoundedRectangleBorder(borderRadius: FBRadius.pillAll),
-        backgroundColor: const Color(0xE61C1C1E),
+        backgroundColor: FBColor.glassDark,
       ),
     );
   }
