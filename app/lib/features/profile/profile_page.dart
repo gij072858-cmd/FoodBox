@@ -17,12 +17,12 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: FBColor.background,
       appBar: AppBar(
-        backgroundColor: FBColor.surface,
+        backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         titleSpacing: FBSpace.page,
-        title: const Text('我的', style: FBTextStyle.h2),
+        title: Text('我的', style: FBTextStyle.h2),
         actions: <Widget>[
           IconButton(
             key: const Key('profile-menu'),

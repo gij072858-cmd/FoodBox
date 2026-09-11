@@ -16,7 +16,7 @@ class SearchPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: FBColor.background,
       appBar: AppBar(
-        backgroundColor: FBColor.surface,
+        backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -27,7 +27,7 @@ class SearchPage extends StatelessWidget {
           onPressed: () => context.pop(),
           icon: const Icon(Icons.arrow_back_rounded),
         ),
-        title: const Text('搜索', style: FBTextStyle.h2),
+        title: Text('搜索', style: FBTextStyle.h2),
       ),
       body: const FbPlaceholder(
         title: '全局搜索',

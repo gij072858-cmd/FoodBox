@@ -15,12 +15,12 @@ class FeedPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: FBColor.background,
       appBar: AppBar(
-        backgroundColor: FBColor.surface,
+        backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         titleSpacing: FBSpace.page,
-        title: const Text('动态', style: FBTextStyle.h2),
+        title: Text('动态', style: FBTextStyle.h2),
       ),
       body: const FbPlaceholder(
         title: '动态 · 敬请期待',

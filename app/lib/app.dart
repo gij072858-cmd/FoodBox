@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
@@ -36,6 +37,37 @@ class _FoodBoxAppState extends State<FoodBoxApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
+      // 取消 Android 默认 overscroll glow，统一为 iOS 弹性滚动
+      scrollBehavior: const _FoodBoxScrollBehavior(),
+      builder: (BuildContext context, Widget? child) {
+        return CupertinoTheme(
+          data: const CupertinoThemeData(
+            primaryColor: FBColor.brand,
+            barBackgroundColor: FBColor.glass,
+            scaffoldBackgroundColor: FBColor.background,
+          ),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
+  }
+}
+
+/// 统一滚动行为：iOS 弹性 + 无 glow
+class _FoodBoxScrollBehavior extends ScrollBehavior {
+  const _FoodBoxScrollBehavior();
+
+  @override
+  Widget buildOverscrollIndicator(
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) {
+    return child;
+  }
+
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) {
+    return const BouncingScrollPhysics();
   }
 }
