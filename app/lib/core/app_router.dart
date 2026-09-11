@@ -6,6 +6,7 @@ import '../features/home/home_page.dart';
 import '../features/home/search_page.dart';
 import '../features/profile/profile_page.dart';
 import '../features/shell/app_shell.dart';
+import '../widgets/showcase_page.dart';
 
 /// 全局路由路径常量
 ///
@@ -23,6 +24,9 @@ abstract final class AppRoutes {
 
   /// 我的
   static const String profile = '/profile';
+
+  /// 组件 Showcase（开发期 UI 走查基准页；组员查组件效果与用法都看这一页）
+  static const String showcase = '/showcase';
 
   // ---- 后续模块页面挂载点（W3 起逐模块填充，路径先占位）----
   /// 库 · 条目详情页
@@ -86,6 +90,12 @@ GoRouter createAppRouter({String initialLocation = AppRoutes.home}) {
             ],
           ),
         ],
+      ),
+      // 开发期工具页：不在任何 Tab 内，全屏打开、可返回（UI 走查基准）
+      GoRoute(
+        path: AppRoutes.showcase,
+        pageBuilder: (BuildContext context, GoRouterState state) =>
+            const CupertinoPage<void>(child: ShowcasePage()),
       ),
     ],
   );

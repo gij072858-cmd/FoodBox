@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../core/app_router.dart';
 import '../../core/theme.dart';
 import '../../widgets/fb_animations.dart';
 import '../../widgets/fb_avatar.dart';
@@ -96,7 +98,7 @@ class ProfilePage extends StatelessWidget {
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: const Color(0x1FFF9500),
+                          color: FBColor.warningLight,
                           borderRadius: FBRadius.smAll,
                         ),
                         child: const Icon(Icons.bookmark_border_rounded, size: 18, color: FBColor.warning),
@@ -148,6 +150,16 @@ class ProfilePage extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: FBSpace.md, vertical: FBSpace.sm),
                       showChevron: true,
                     ),
+                    _divider(),
+                    // 开发期工具入口：组件库走查基准页（W5 页面正式化时可移除）
+                    FbListTile(
+                      leading: const Icon(Icons.widgets_outlined, size: 20, color: FBColor.textSecondary),
+                      title: '组件库 Showcase',
+                      subtitle: 'UI 规范走查基准（开发期）',
+                      onTap: () => context.push(AppRoutes.showcase),
+                      padding: const EdgeInsets.symmetric(horizontal: FBSpace.md, vertical: FBSpace.sm),
+                      showChevron: true,
+                    ),
                   ],
                 ),
               ),
@@ -187,14 +199,7 @@ class _IdentityHero extends StatelessWidget {
           right: FBSpace.page,
         ),
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: <Color>[
-              Color(0xFFFFF0E8),
-              Color(0xFFFFE0D0),
-            ],
-          ),
+          gradient: FBGradient.warmHero,
         ),
         child: Stack(
           children: <Widget>[
