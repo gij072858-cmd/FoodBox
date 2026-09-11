@@ -67,7 +67,9 @@ void main() {
     final DateTime savedEnd = DateTime.now().add(const Duration(minutes: 3));
     controller.restore(savedEnd);
     expect(controller.endAt, savedEnd);
-    expect(controller.remaining.inMinutes, 2); // 约 3 分钟，容忍取值瞬间
+    // 断言剩余约 3 分钟：inMinutes 截尾取值，恰在毫秒边界会得 3 而非 2，
+    // 用秒级区间断言消除竞态（178s ≈ 慢机器容忍，180s = 边界值）
+    expect(controller.remaining.inSeconds, inInclusiveRange(178, 180));
     controller.pause();
   });
 }
