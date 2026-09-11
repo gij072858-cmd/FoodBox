@@ -1,0 +1,65 @@
+[
+  {
+    "name": "番茄炒蛋",
+    "cuisine": "家常菜",
+    "mainCategory": "蔬菜",
+    "durationMinutes": 15,
+    "difficulty": "easy",
+    "baseServings": 2,
+    "seasonMonths": [5, 6, 7, 8, 9],
+    "ingredients": [
+      { "name": "番茄", "amount": 2, "unit": "个", "isRequired": true, "isSeasoning": false },
+      { "name": "鸡蛋", "amount": 3, "unit": "个", "isRequired": true, "isSeasoning": false },
+      { "name": "小葱", "amount": 1, "unit": "根", "isRequired": false, "isSeasoning": false },
+      { "name": "食用油", "amount": 20, "unit": "ml", "isRequired": true, "isSeasoning": true },
+      { "name": "盐", "amount": 3, "unit": "g", "isRequired": true, "isSeasoning": true },
+      { "name": "白糖", "amount": 5, "unit": "g", "isRequired": false, "isSeasoning": true }
+    ],
+    "intro": "酸甜滑嫩的国民下饭菜，十五分钟出锅。",
+    "steps": [
+      {
+        "orderIndex": 1,
+        "instruction": "番茄顶部划十字，切块备用；小葱切花",
+        "durationMinutes": 3,
+        "resources": ["board", "hand"],
+        "safetyTag": "none",
+        "photoPaths": [],
+        "note": "想去皮先用开水烫十秒"
+      },
+      {
+        "orderIndex": 2,
+        "instruction": "鸡蛋磕入碗中，加一勺清水与少许盐，打散至起泡",
+        "durationMinutes": 2,
+        "resources": ["hand"],
+        "safetyTag": "none",
+        "photoPaths": []
+      },
+      {
+        "orderIndex": 3,
+        "instruction": "热锅热油，倒入蛋液，边缘凝固后快速划散，八成熟盛出",
+        "durationMinutes": 3,
+        "resources": ["stove", "hand"],
+        "safetyTag": "highHeat",
+        "photoPaths": [],
+        "note": "蛋别炒老，后面还要回锅"
+      },
+      {
+        "orderIndex": 4,
+        "instruction": "锅中补少许油，下番茄块中火翻炒，加盐与糖，炒出红油",
+        "durationMinutes": 4,
+        "resources": ["stove", "hand"],
+        "safetyTag": "highHeat",
+        "photoPaths": [],
+        "note": "用锅铲轻压番茄帮助出汁"
+      },
+      {
+        "orderIndex": 5,
+        "instruction": "倒回炒蛋，翻匀裹汁，撒葱花出锅",
+        "durationMinutes": 2,
+        "resources": ["stove", "hand"],
+        "safetyTag": "highHeat",
+        "photoPaths": []
+      }
+    ]
+  }
+]
