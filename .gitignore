@@ -2,6 +2,7 @@
 .trae/
 .idea/
 .vscode/
+.workbuddy/
 *.iml
 
 # ---- 操作系统 ----
