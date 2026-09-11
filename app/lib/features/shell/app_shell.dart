@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme.dart';
+import '../../widgets/fb_animations.dart';
 import '../../widgets/fb_glass_container.dart';
 
-/// 底部导航承载壳（构想 2.1）
+/// 底部导航承载壳（v3.0 精修版）
 ///
-/// - 极简三段式「首页 / 动态 / 我的」，无描边；
-/// - 图标线性，激活态实心加粗、文字加粗；
-/// - 底部导航与宽屏 NavigationRail 均采用 Apple 毛玻璃质感；
-/// - 宽屏（≥ [FBBreakpoint.wide]）按构想 2.7 自动转为左侧 NavigationRail。
+/// - 三段式「首页 / 动态 / 我的」，毛玻璃质感；
+/// - 激活态：底部滑动指示胶囊 + 图标弹跳 + 文字加粗；
+/// - 宽屏（≥ [FBBreakpoint.wide]）自动转为左侧 NavigationRail；
+/// - 切换 Tab 时带轻微弹性动画与触觉反馈。
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.navigationShell});
 
@@ -35,9 +37,11 @@ class AppShell extends StatelessWidget {
   ];
 
   void _goBranch(int index) {
+    if (index != navigationShell.currentIndex) {
+      HapticFeedback.selectionClick();
+    }
     navigationShell.goBranch(
       index,
-      // 再次点击当前 Tab → 回到该分支的初始页面
       initialLocation: index == navigationShell.currentIndex,
     );
   }
@@ -50,12 +54,35 @@ class AppShell extends StatelessWidget {
     }
     return Scaffold(
       backgroundColor: FBColor.background,
-      body: navigationShell,
+      body: AnimatedSwitcher(
+        duration: FBMotion.normal,
+        switchInCurve: FBMotion.easeOutQuart,
+        switchOutCurve: FBMotion.easeIn,
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, 8),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(
+                parent: animation,
+                curve: FBMotion.easeOutQuart,
+              )),
+              child: child,
+            ),
+          );
+        },
+        child: KeyedSubtree(
+          key: ValueKey<int>(navigationShell.currentIndex),
+          child: navigationShell,
+        ),
+      ),
       bottomNavigationBar: _buildBottomBar(),
     );
   }
 
-  /// 电脑端：左侧导航栏（构想 2.7）
+  /// 电脑端：左侧导航栏
   Widget _buildWideLayout() {
     return Scaffold(
       backgroundColor: FBColor.background,
@@ -90,13 +117,38 @@ class AppShell extends StatelessWidget {
             ),
           ),
           const VerticalDivider(width: 1, color: FBColor.separator),
-          Expanded(child: navigationShell),
+          Expanded(
+            child: AnimatedSwitcher(
+              duration: FBMotion.normal,
+              switchInCurve: FBMotion.easeOutQuart,
+              switchOutCurve: FBMotion.easeIn,
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(8, 0),
+                      end: Offset.zero,
+                    ).animate(CurvedAnimation(
+                      parent: animation,
+                      curve: FBMotion.easeOutQuart,
+                    )),
+                    child: child,
+                  ),
+                );
+              },
+              child: KeyedSubtree(
+                key: ValueKey<int>(navigationShell.currentIndex),
+                child: navigationShell,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  /// 手机端：极简三段式底部 TabBar
+  /// 手机端：底部 TabBar + 滑动指示胶囊
   Widget _buildBottomBar() {
     return FbGlassContainer(
       borderRadius: BorderRadius.zero,
@@ -107,11 +159,43 @@ class AppShell extends StatelessWidget {
         top: false,
         child: SizedBox(
           height: 60,
-          child: Row(
-            children: List<Widget>.generate(
-              _destinations.length,
-              _buildBottomItem,
-            ),
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              final double itemWidth = constraints.maxWidth / _destinations.length;
+              return Stack(
+                children: <Widget>[
+                  // 滑动指示胶囊
+                  AnimatedPositioned(
+                    duration: FBMotion.normal,
+                    curve: FBMotion.springLight,
+                    left: navigationShell.currentIndex * itemWidth + itemWidth / 2 - 20,
+                    top: 4,
+                    child: Container(
+                      width: 40,
+                      height: 3,
+                      decoration: BoxDecoration(
+                        color: FBColor.brand,
+                        borderRadius: FBRadius.pillAll,
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                            color: FBColor.brand.withValues(alpha: 0.4),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Tab 按钮
+                  Row(
+                    children: List<Widget>.generate(
+                      _destinations.length,
+                      _buildBottomItem,
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -121,30 +205,39 @@ class AppShell extends StatelessWidget {
   Widget _buildBottomItem(int index) {
     final _ShellDestination destination = _destinations[index];
     final bool selected = navigationShell.currentIndex == index;
-    final Color color = selected ? FBColor.brand : FBColor.textSecondary;
 
     return Expanded(
-      child: GestureDetector(
-        key: Key('bottom-nav-$index'),
+      child: FbPressFeedback(
+        pressedScale: 0.9,
         onTap: () => _goBranch(index),
-        behavior: HitTestBehavior.opaque,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              selected ? destination.activeIcon : destination.icon,
-              size: FBIcon.nav,
-              color: color,
-            ),
-            const SizedBox(height: 2),
-            Text(
-              destination.label,
-              style: FBTextStyle.micro.copyWith(
-                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                color: color,
+        child: Container(
+          color: Colors.transparent,
+          key: Key('bottom-nav-$index'),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              AnimatedScale(
+                scale: selected ? 1.1 : 1.0,
+                duration: FBMotion.quick,
+                curve: FBMotion.springLight,
+                child: Icon(
+                  selected ? destination.activeIcon : destination.icon,
+                  size: FBIcon.nav,
+                  color: selected ? FBColor.brand : FBColor.textSecondary,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 2),
+              AnimatedDefaultTextStyle(
+                duration: FBMotion.quick,
+                curve: FBMotion.easeInOut,
+                style: FBTextStyle.micro.copyWith(
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                  color: selected ? FBColor.brand : FBColor.textSecondary,
+                ),
+                child: Text(destination.label),
+              ),
+            ],
+          ),
         ),
       ),
     );

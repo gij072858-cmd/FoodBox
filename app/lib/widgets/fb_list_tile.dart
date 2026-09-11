@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../core/theme.dart';
+import 'fb_animations.dart';
 
 /// iOS 风格列表行
 ///
 /// 左图（40×40，圆角 10）+ 标题 + 副标题 + 右箭头/操作 slot。
+/// 带按压反馈。
 class FbListTile extends StatelessWidget {
   const FbListTile({
     super.key,
@@ -15,6 +17,7 @@ class FbListTile extends StatelessWidget {
     this.onTap,
     this.showChevron = true,
     this.padding = const EdgeInsets.symmetric(vertical: FBSpace.sm),
+    this.fadeInDelay,
   });
 
   final Widget? leading;
@@ -24,10 +27,11 @@ class FbListTile extends StatelessWidget {
   final VoidCallback? onTap;
   final bool showChevron;
   final EdgeInsetsGeometry padding;
+  final Duration? fadeInDelay;
 
   @override
   Widget build(BuildContext context) {
-    Widget content = Padding(
+    Widget tile = Padding(
       padding: padding,
       child: Row(
         children: <Widget>[
@@ -62,13 +66,17 @@ class FbListTile extends StatelessWidget {
     );
 
     if (onTap != null) {
-      content = GestureDetector(
+      tile = FbPressFeedback(
         onTap: onTap,
-        behavior: HitTestBehavior.opaque,
-        child: content,
+        pressedScale: 0.99,
+        child: tile,
       );
     }
 
-    return content;
+    if (fadeInDelay != null) {
+      tile = FbFadeInUp(delay: fadeInDelay!, child: tile);
+    }
+
+    return tile;
   }
 }

@@ -131,7 +131,7 @@
 <body>
   <header>
     <h1>FoodBox Apple 风格视觉规范</h1>
-    <p>极简 · 毛玻璃 · 精致留白 · 2026-09-11</p>
+    <p>极简 · 毛玻璃 · 精致留白 · 动效系统 v2.1 · 2026-09-11</p>
   </header>
   <main>
     <section>
@@ -153,11 +153,69 @@
     <section>
       <h2>字体层级</h2>
       <div class="card">
-        <div class="typo-row"><span class="label">LargeTitle</span><span style="font-size:28px;font-weight:700">我的</span></div>
+        <div class="typo-row"><span class="label">Display</span><span style="font-size:34px;font-weight:900;letter-spacing:-0.5px">38</span></div>
+        <div class="typo-row"><span class="label">LargeTitle</span><span style="font-size:28px;font-weight:800">我的</span></div>
         <div class="typo-row"><span class="label">H1</span><span style="font-size:20px;font-weight:700">页面标题</span></div>
         <div class="typo-row"><span class="label">H2</span><span style="font-size:17px;font-weight:600">模块标题</span></div>
         <div class="typo-row"><span class="label">Body</span><span style="font-size:15px">正文内容，行高 1.35</span></div>
+        <div class="typo-row"><span class="label">Callout</span><span style="font-size:14px;color:var(--text-secondary)">数字 / 次级说明</span></div>
         <div class="typo-row"><span class="label">Caption</span><span style="font-size:12px;color:var(--text-secondary)">时间 / 计数</span></div>
+        <div class="typo-row"><span class="label">Micro</span><span style="font-size:11px;color:var(--text-secondary)">极小注释</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin:8px 0 0">另有 <code>button</code>（Callout+600），<code>numberDisplay</code>（Display+900 等宽数字，用于统计/倒计时/XP），<code>numberTitle</code>（H1+700 等宽）。正文行高 1.35，标题行高 1.2，标题字距 0。</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>间距栅格（4pt 网格）</h2>
+      <div class="card">
+        <div style="font-size:14px;line-height:2">
+          <code>xxs 4</code> · <code>xs 8</code> · <code>sm 12</code> · <code>md 16</code> · <code>lg 20</code> · <code>xl 24</code> · <code>xxl 32</code> · <code>xxxl 48</code> · <code>xxxxl 64</code>
+        </div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-top:8px">
+          页面左右边距 <b>20</b>（page）；卡片间距 <b>16</b>（card）；模块垂直间距 <b>24</b>（section）；Hero 区上下 <b>48</b>（hero）；瀑布流列距 <b>8</b>（waterfall）。
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>圆角与阴影</h2>
+      <div class="card">
+        <div style="font-size:14px;line-height:2">
+          圆角 <code>xs 6</code> · <code>sm 10</code> · <code>md 16</code>（卡片）· <code>lg 20</code> · <code>xl 28</code> · <code>xxl 36</code> · <code>pill 999</code>。蒙版卡片={<code>md</code>}；缩略图={<code>xs</code>}；底部大圆角={顶 <code>xl</code>}（Sheet/Modal）。
+        </div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-top:8px">
+          阴影阶梯：<b>card</b>（静置，0 2 8 + 0 1 2）→ <b>cardHover</b>（悬浮抬升 0 6 20）→ <b>cardPressed</b>（按下变矮 0 1 4）。
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>动效系统（v2.1）</h2>
+      <div class="card">
+        <div style="font-size:14px;line-height:2">
+          <b>时长</b>：instant <code>120ms</code>（按钮/开关）· quick <code>200ms</code> · normal <code>350ms</code>（Modal/展开）· entrance <code>600ms</code>（入场）· pageTransition <code>400ms</code> · heroEntrance <code>800ms</code>。
+        </div>
+        <div style="font-size:14px;line-height:2">
+          <b>曲线</b>：<code>easeOutQuart (0.25,1,0.5,1)</code>（默认入场）· <code>easeOutExpo (0.16,1,0.3,1)</code> · <code>springLight (0.34,1.2,0.64,1)</code>（轻回弹，列表弹出）。
+        </div>
+        <div style="font-size:14px;line-height:2">
+          <b>按压反馈</b>：卡片 <code>0.98</code> · 按钮 <code>0.96</code> · 图标 <code>0.90</code>；按压时阴影减弱，松手回弹。
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:15px;font-weight:600;margin-bottom:8px">动画组件（app/lib/widgets/fb_animations.dart）</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <tr style="color:var(--text-secondary);text-align:left"><th style="padding:6px 8px;border-bottom:1px solid var(--separator)">组件</th><th style="padding:6px 8px;border-bottom:1px solid var(--separator)">用途</th></tr>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--separator)"><code class="mono">FbFadeInUp</code></td><td style="padding:6px 8px;border-bottom:1px solid var(--separator)">淡入 + 上滑入场（delay/duration/curve）</td></tr>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--separator)"><code class="mono">FbStaggerList</code></td><td style="padding:6px 8px;border-bottom:1px solid var(--separator)">列表项错位入场（step 50ms，上限 8 项）</td></tr>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--separator)"><code class="mono">FbPressFeedback</code></td><td style="padding:6px 8px;border-bottom:1px solid var(--separator)">按压缩小 + 阴影减弱回弹（所有卡片/按钮/列表行）</td></tr>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--separator)"><code class="mono">FbFloat</code></td><td style="padding:6px 8px;border-bottom:1px solid var(--separator)">上下轻浮动（空态插画 / Hero 装饰）</td></tr>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--separator)"><code class="mono">FbPulse</code></td><td style="padding:6px 8px;border-bottom:1px solid var(--separator)">脉冲缩放 1→1.08（新消息 / 提醒 / 角标）</td></tr>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--separator)"><code class="mono">FbCountUp</code></td><td style="padding:6px 8px;border-bottom:1px solid var(--separator)">数字从 0 滚动到目标值（前置/后缀可见）</td></tr>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--separator)"><code class="mono">FbAnimatedProgress</code></td><td style="padding:6px 8px;border-bottom:1px solid var(--separator)">进度条从 0 填充到目标值（默认 brand→暖橙渐变）</td></tr>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--separator)"><code class="mono">FbGradientBackground</code></td><td style="padding:6px 8px;border-bottom:1px solid var(--separator)">渐变背景 + 顶部辉光（Hero 区 / 空态氛围）</td></tr>
+        </table>
+        <p style="font-size:12px;color:var(--text-secondary);margin:10px 0 0">纪律：所有动效时长/曲线走 <code>FBMotion</code> 常量，禁止魔法数字；倒计时按"结束时间戳"渲染，不依赖周期计数。</p>
       </div>
     </section>
 
