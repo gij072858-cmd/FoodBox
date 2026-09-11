@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "note": "食材别名归一表。canonical = 标准名（与 food_items.json 的 name 对齐），aliases = 指向它的其他常见写法。W4 由组长扩充至全部常用别名，并由 AliasTable 读取做匹配归一闪（见《接口约定.md》3.1）。",
+  "groups": [
+    {
+      "canonical": "番茄",
+      "aliases": ["西红柿", "洋柿子"]
+    },
+    {
+      "canonical": "马铃薯",
+      "aliases": ["土豆", "洋芋"]
+    }
+  ]
+}
