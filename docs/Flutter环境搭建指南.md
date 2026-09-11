@@ -191,8 +191,8 @@ flutter run -d windows          # 跑 Windows 桌面端
 flutter run -d <device-id>      # 跑安卓端
 flutter devices                 # 看有哪些设备
 
-# 质量自查（提交 PR 前必须跑，三条全过才提）
-flutter analyze                 # 静态检查
+# 质量自查（推送前必须跑，三条全过才推）
+flutter analyze                 # 静态检查（本机路径含中文报错时，改用 dart analyze）
 flutter test                    # 单元测试 / 组件测试
 dart format .                   # 统一代码格式
 
@@ -217,4 +217,4 @@ git config --global user.email "你的GitHub注册邮箱"
 
 ---
 
-*本文档随环境问题持续更新：谁踩了新的坑，就在第六节加一行，并向组长提 PR。*
+*本文档随环境问题持续更新：谁踩了新的坑，就在第六节加一行，并向组长提交。*
