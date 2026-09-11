@@ -29,6 +29,7 @@ class Item {
     this.introStore,
     this.introTip,
     this.isCustom = false,
+    this.isDepleted = false,
     this.note,
     this.createdAt,
     this.updatedAt,
@@ -87,6 +88,10 @@ class Item {
 
   /// 是否用户自建条目（预置库判定用）
   final bool isCustom;
+
+  /// 库存已用完（v1.1）：数量扣减至 0 时置 true，条目置灰保留不删除。
+  /// 见《接口约定.md》3.3。
+  final bool isDepleted;
 
   /// 备注
   final String? note;
@@ -150,6 +155,7 @@ class Item {
     String? introStore,
     String? introTip,
     bool? isCustom,
+    bool? isDepleted,
     String? note,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -175,6 +181,7 @@ class Item {
       introStore: introStore ?? this.introStore,
       introTip: introTip ?? this.introTip,
       isCustom: isCustom ?? this.isCustom,
+      isDepleted: isDepleted ?? this.isDepleted,
       note: note ?? this.note,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

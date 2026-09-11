@@ -230,6 +230,21 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _isDepletedMeta = const VerificationMeta(
+    'isDepleted',
+  );
+  @override
+  late final GeneratedColumn<bool> isDepleted = GeneratedColumn<bool>(
+    'is_depleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_depleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _noteMeta = const VerificationMeta('note');
   @override
   late final GeneratedColumn<String> note = GeneratedColumn<String>(
@@ -285,6 +300,7 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
     introStore,
     introTip,
     isCustom,
+    isDepleted,
     note,
     createdAt,
     updatedAt,
@@ -397,6 +413,12 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
       context.handle(
         _isCustomMeta,
         isCustom.isAcceptableOrUnknown(data['is_custom']!, _isCustomMeta),
+      );
+    }
+    if (data.containsKey('is_depleted')) {
+      context.handle(
+        _isDepletedMeta,
+        isDepleted.isAcceptableOrUnknown(data['is_depleted']!, _isDepletedMeta),
       );
     }
     if (data.containsKey('note')) {
@@ -514,6 +536,10 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, ItemRow> {
         DriftSqlType.bool,
         data['${effectivePrefix}is_custom'],
       )!,
+      isDepleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_depleted'],
+      )!,
       note: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}note'],
@@ -605,6 +631,12 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
 
   /// 是否用户自建
   final bool isCustom;
+
+  /// 库存已用完（v1.1 新增，见《接口约定.md》3.3）
+  ///
+  /// 数量扣减至 0 时置 true —— 条目**置灰保留而不删除**，
+  /// 由页面提示「已用完，是否移出库 / 加入购物清单」。
+  final bool isDepleted;
   final String? note;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -629,6 +661,7 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     this.introStore,
     this.introTip,
     required this.isCustom,
+    required this.isDepleted,
     this.note,
     required this.createdAt,
     required this.updatedAt,
@@ -694,6 +727,7 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
       map['intro_tip'] = Variable<String>(introTip);
     }
     map['is_custom'] = Variable<bool>(isCustom);
+    map['is_depleted'] = Variable<bool>(isDepleted);
     if (!nullToAbsent || note != null) {
       map['note'] = Variable<String>(note);
     }
@@ -748,6 +782,7 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
           ? const Value.absent()
           : Value(introTip),
       isCustom: Value(isCustom),
+      isDepleted: Value(isDepleted),
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
@@ -788,6 +823,7 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
       introStore: serializer.fromJson<String?>(json['introStore']),
       introTip: serializer.fromJson<String?>(json['introTip']),
       isCustom: serializer.fromJson<bool>(json['isCustom']),
+      isDepleted: serializer.fromJson<bool>(json['isDepleted']),
       note: serializer.fromJson<String?>(json['note']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
@@ -825,6 +861,7 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
       'introStore': serializer.toJson<String?>(introStore),
       'introTip': serializer.toJson<String?>(introTip),
       'isCustom': serializer.toJson<bool>(isCustom),
+      'isDepleted': serializer.toJson<bool>(isDepleted),
       'note': serializer.toJson<String?>(note),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
@@ -852,6 +889,7 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     Value<String?> introStore = const Value.absent(),
     Value<String?> introTip = const Value.absent(),
     bool? isCustom,
+    bool? isDepleted,
     Value<String?> note = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -880,6 +918,7 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     introStore: introStore.present ? introStore.value : this.introStore,
     introTip: introTip.present ? introTip.value : this.introTip,
     isCustom: isCustom ?? this.isCustom,
+    isDepleted: isDepleted ?? this.isDepleted,
     note: note.present ? note.value : this.note,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -916,6 +955,9 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
           : this.introStore,
       introTip: data.introTip.present ? data.introTip.value : this.introTip,
       isCustom: data.isCustom.present ? data.isCustom.value : this.isCustom,
+      isDepleted: data.isDepleted.present
+          ? data.isDepleted.value
+          : this.isDepleted,
       note: data.note.present ? data.note.value : this.note,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
@@ -945,6 +987,7 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
           ..write('introStore: $introStore, ')
           ..write('introTip: $introTip, ')
           ..write('isCustom: $isCustom, ')
+          ..write('isDepleted: $isDepleted, ')
           ..write('note: $note, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -974,6 +1017,7 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
     introStore,
     introTip,
     isCustom,
+    isDepleted,
     note,
     createdAt,
     updatedAt,
@@ -1002,6 +1046,7 @@ class ItemRow extends DataClass implements Insertable<ItemRow> {
           other.introStore == this.introStore &&
           other.introTip == this.introTip &&
           other.isCustom == this.isCustom &&
+          other.isDepleted == this.isDepleted &&
           other.note == this.note &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
@@ -1028,6 +1073,7 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
   final Value<String?> introStore;
   final Value<String?> introTip;
   final Value<bool> isCustom;
+  final Value<bool> isDepleted;
   final Value<String?> note;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
@@ -1052,6 +1098,7 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     this.introStore = const Value.absent(),
     this.introTip = const Value.absent(),
     this.isCustom = const Value.absent(),
+    this.isDepleted = const Value.absent(),
     this.note = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -1077,6 +1124,7 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     this.introStore = const Value.absent(),
     this.introTip = const Value.absent(),
     this.isCustom = const Value.absent(),
+    this.isDepleted = const Value.absent(),
     this.note = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -1103,6 +1151,7 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     Expression<String>? introStore,
     Expression<String>? introTip,
     Expression<bool>? isCustom,
+    Expression<bool>? isDepleted,
     Expression<String>? note,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
@@ -1128,6 +1177,7 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
       if (introStore != null) 'intro_store': introStore,
       if (introTip != null) 'intro_tip': introTip,
       if (isCustom != null) 'is_custom': isCustom,
+      if (isDepleted != null) 'is_depleted': isDepleted,
       if (note != null) 'note': note,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -1155,6 +1205,7 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     Value<String?>? introStore,
     Value<String?>? introTip,
     Value<bool>? isCustom,
+    Value<bool>? isDepleted,
     Value<String?>? note,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
@@ -1180,6 +1231,7 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
       introStore: introStore ?? this.introStore,
       introTip: introTip ?? this.introTip,
       isCustom: isCustom ?? this.isCustom,
+      isDepleted: isDepleted ?? this.isDepleted,
       note: note ?? this.note,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -1257,6 +1309,9 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
     if (isCustom.present) {
       map['is_custom'] = Variable<bool>(isCustom.value);
     }
+    if (isDepleted.present) {
+      map['is_depleted'] = Variable<bool>(isDepleted.value);
+    }
     if (note.present) {
       map['note'] = Variable<String>(note.value);
     }
@@ -1292,6 +1347,7 @@ class ItemsCompanion extends UpdateCompanion<ItemRow> {
           ..write('introStore: $introStore, ')
           ..write('introTip: $introTip, ')
           ..write('isCustom: $isCustom, ')
+          ..write('isDepleted: $isDepleted, ')
           ..write('note: $note, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
@@ -4164,6 +4220,7 @@ typedef $$ItemsTableCreateCompanionBuilder = ItemsCompanion Function({
   Value<String?> introStore,
   Value<String?> introTip,
   Value<bool> isCustom,
+  Value<bool> isDepleted,
   Value<String?> note,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
@@ -4189,6 +4246,7 @@ typedef $$ItemsTableUpdateCompanionBuilder = ItemsCompanion Function({
   Value<String?> introStore,
   Value<String?> introTip,
   Value<bool> isCustom,
+  Value<bool> isDepleted,
   Value<String?> note,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
@@ -4303,6 +4361,11 @@ class $$ItemsTableFilterComposer extends Composer<_$AppDatabase, $ItemsTable> {
 
   ColumnFilters<bool> get isCustom => $composableBuilder(
     column: $table.isCustom,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isDepleted => $composableBuilder(
+    column: $table.isDepleted,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4431,6 +4494,11 @@ class $$ItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get isDepleted => $composableBuilder(
+    column: $table.isDepleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get note => $composableBuilder(
     column: $table.note,
     builder: (column) => ColumnOrderings(column),
@@ -4529,6 +4597,11 @@ class $$ItemsTableAnnotationComposer
   GeneratedColumn<bool> get isCustom =>
       $composableBuilder(column: $table.isCustom, builder: (column) => column);
 
+  GeneratedColumn<bool> get isDepleted => $composableBuilder(
+    column: $table.isDepleted,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get note =>
       $composableBuilder(column: $table.note, builder: (column) => column);
 
@@ -4587,6 +4660,7 @@ class $$ItemsTableTableManager
                 Value<String?> introStore = const Value.absent(),
                 Value<String?> introTip = const Value.absent(),
                 Value<bool> isCustom = const Value.absent(),
+                Value<bool> isDepleted = const Value.absent(),
                 Value<String?> note = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
@@ -4611,6 +4685,7 @@ class $$ItemsTableTableManager
                 introStore: introStore,
                 introTip: introTip,
                 isCustom: isCustom,
+                isDepleted: isDepleted,
                 note: note,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -4637,6 +4712,7 @@ class $$ItemsTableTableManager
                 Value<String?> introStore = const Value.absent(),
                 Value<String?> introTip = const Value.absent(),
                 Value<bool> isCustom = const Value.absent(),
+                Value<bool> isDepleted = const Value.absent(),
                 Value<String?> note = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
@@ -4661,6 +4737,7 @@ class $$ItemsTableTableManager
                 introStore: introStore,
                 introTip: introTip,
                 isCustom: isCustom,
+                isDepleted: isDepleted,
                 note: note,
                 createdAt: createdAt,
                 updatedAt: updatedAt,

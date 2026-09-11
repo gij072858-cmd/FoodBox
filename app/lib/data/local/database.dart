@@ -79,6 +79,12 @@ class Items extends Table {
   /// 是否用户自建
   BoolColumn get isCustom => boolean().withDefault(const Constant(false))();
 
+  /// 库存已用完（v1.1 新增，见《接口约定.md》3.3）
+  ///
+  /// 数量扣减至 0 时置 true —— 条目**置灰保留而不删除**，
+  /// 由页面提示「已用完，是否移出库 / 加入购物清单」。
+  BoolColumn get isDepleted => boolean().withDefault(const Constant(false))();
+
   TextColumn get note => text().nullable()();
 
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
@@ -265,12 +271,19 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.memory() : super(NativeDatabase.memory());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (Migrator m) async {
       await m.createAll();
+    },
+    onUpgrade: (Migrator m, int from, int to) async {
+      // v1 → v2：items 新增 is_depleted 归零标记（接口约定 v1.1）
+      // 组员本地已有 foodbox.sqlite 时无需清库，直接补列。
+      if (from < 2) {
+        await m.addColumn(items, items.isDepleted);
+      }
     },
     beforeOpen: (OpeningDetails details) async {
       // 生熟分离等外键约束依赖它

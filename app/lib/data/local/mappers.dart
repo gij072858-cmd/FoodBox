@@ -40,6 +40,7 @@ extension ItemRowMapper on ItemRow {
     introStore: introStore,
     introTip: introTip,
     isCustom: isCustom,
+    isDepleted: isDepleted,
     note: note,
     createdAt: createdAt,
     updatedAt: updatedAt,
@@ -68,6 +69,7 @@ extension ItemDomainMapper on Item {
     introStore: Value<String?>(introStore),
     introTip: Value<String?>(introTip),
     isCustom: Value<bool>(isCustom),
+    isDepleted: Value<bool>(isDepleted),
     note: Value<String?>(note),
     updatedAt: Value<DateTime>(updatedAt ?? DateTime.now()),
   );
