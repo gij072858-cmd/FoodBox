@@ -11,13 +11,26 @@ import '../../widgets/fb_glass_container.dart';
 /// - 三段式「首页 / 动态 / 我的」，毛玻璃质感；
 /// - 激活态：底部滑动指示胶囊 + 图标弹跳 + 文字加粗；
 /// - 宽屏（≥ [FBBreakpoint.wide]）自动转为左侧 NavigationRail；
-/// - 切换 Tab 时带轻微弹性动画与触觉反馈。
-class AppShell extends StatelessWidget {
+/// - 切换 Tab 时带轻微淡入与触觉反馈。
+///
+/// **切换动画的实现约束（勿改回 AnimatedSwitcher）**：
+/// `StatefulNavigationShell` 内部持有 GlobalKey，而 `AnimatedSwitcher` 在过渡期会
+/// 同时保留新旧 child —— 同一个 GlobalKey 出现在两处，抛
+/// `Duplicate GlobalKey detected in widget tree` 并截断 widget 子树
+/// （真机表现为切 Tab 时内容闪断/状态丢失）。
+/// 这里改用**重放式淡入**：监听 `currentIndex` 变化，让整块内容淡入一次，
+/// 既保留过渡观感，又不会同时存在两份 navigationShell。
+class AppShell extends StatefulWidget {
   const AppShell({super.key, required this.navigationShell});
 
   /// go_router 的分支导航壳，负责保留各 Tab 自己的导航栈
   final StatefulNavigationShell navigationShell;
 
+  @override
+  State<AppShell> createState() => _AppShellState();
+}
+
+class _AppShellState extends State<AppShell> with SingleTickerProviderStateMixin {
   static const List<_ShellDestination> _destinations = <_ShellDestination>[
     _ShellDestination(
       label: '首页',
@@ -36,13 +49,52 @@ class AppShell extends StatelessWidget {
     ),
   ];
 
+  late final AnimationController _switchController;
+  late final Animation<double> _fade;
+  late final Animation<Offset> _slide;
+
+  @override
+  void initState() {
+    super.initState();
+    // value: 1 —— 首帧即为完成态，启动时不额外播放一次
+    _switchController = AnimationController(
+      vsync: this,
+      duration: FBMotion.normal,
+      value: 1,
+    );
+    final CurvedAnimation curved = CurvedAnimation(
+      parent: _switchController,
+      curve: FBMotion.easeOutQuart,
+    );
+    _fade = curved;
+    _slide = Tween<Offset>(
+      begin: const Offset(0, 0.02),
+      end: Offset.zero,
+    ).animate(curved);
+  }
+
+  @override
+  void didUpdateWidget(AppShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.navigationShell.currentIndex !=
+        widget.navigationShell.currentIndex) {
+      _switchController.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _switchController.dispose();
+    super.dispose();
+  }
+
   void _goBranch(int index) {
-    if (index != navigationShell.currentIndex) {
+    if (index != widget.navigationShell.currentIndex) {
       HapticFeedback.selectionClick();
     }
-    navigationShell.goBranch(
+    widget.navigationShell.goBranch(
       index,
-      initialLocation: index == navigationShell.currentIndex,
+      initialLocation: index == widget.navigationShell.currentIndex,
     );
   }
 
@@ -54,31 +106,19 @@ class AppShell extends StatelessWidget {
     }
     return Scaffold(
       backgroundColor: FBColor.background,
-      body: AnimatedSwitcher(
-        duration: FBMotion.normal,
-        switchInCurve: FBMotion.easeOutQuart,
-        switchOutCurve: FBMotion.easeIn,
-        transitionBuilder: (Widget child, Animation<double> animation) {
-          return FadeTransition(
-            opacity: animation,
-            child: SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0, 8),
-                end: Offset.zero,
-              ).animate(CurvedAnimation(
-                parent: animation,
-                curve: FBMotion.easeOutQuart,
-              )),
-              child: child,
-            ),
-          );
-        },
-        child: KeyedSubtree(
-          key: ValueKey<int>(navigationShell.currentIndex),
-          child: navigationShell,
-        ),
-      ),
+      body: _buildAnimatedBody(),
       bottomNavigationBar: _buildBottomBar(),
+    );
+  }
+
+  /// 重放式淡入：唯一包含 `navigationShell` 的入口，两侧布局共用
+  Widget _buildAnimatedBody() {
+    return FadeTransition(
+      opacity: _fade,
+      child: SlideTransition(
+        position: _slide,
+        child: widget.navigationShell,
+      ),
     );
   }
 
@@ -92,7 +132,7 @@ class AppShell extends StatelessWidget {
             borderRadius: BorderRadius.zero,
             child: NavigationRail(
               backgroundColor: Colors.transparent,
-              selectedIndex: navigationShell.currentIndex,
+              selectedIndex: widget.navigationShell.currentIndex,
               onDestinationSelected: _goBranch,
               labelType: NavigationRailLabelType.all,
               indicatorColor: FBColor.brandLight,
@@ -118,30 +158,7 @@ class AppShell extends StatelessWidget {
           ),
           const VerticalDivider(width: 1, color: FBColor.separator),
           Expanded(
-            child: AnimatedSwitcher(
-              duration: FBMotion.normal,
-              switchInCurve: FBMotion.easeOutQuart,
-              switchOutCurve: FBMotion.easeIn,
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(8, 0),
-                      end: Offset.zero,
-                    ).animate(CurvedAnimation(
-                      parent: animation,
-                      curve: FBMotion.easeOutQuart,
-                    )),
-                    child: child,
-                  ),
-                );
-              },
-              child: KeyedSubtree(
-                key: ValueKey<int>(navigationShell.currentIndex),
-                child: navigationShell,
-              ),
-            ),
+            child: _buildAnimatedBody(),
           ),
         ],
       ),
@@ -161,14 +178,17 @@ class AppShell extends StatelessWidget {
           height: 60,
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-              final double itemWidth = constraints.maxWidth / _destinations.length;
+              final double itemWidth =
+                  constraints.maxWidth / _destinations.length;
               return Stack(
                 children: <Widget>[
                   // 滑动指示胶囊
                   AnimatedPositioned(
                     duration: FBMotion.normal,
                     curve: FBMotion.springLight,
-                    left: navigationShell.currentIndex * itemWidth + itemWidth / 2 - 20,
+                    left: widget.navigationShell.currentIndex * itemWidth +
+                        itemWidth / 2 -
+                        20,
                     top: 4,
                     child: Container(
                       width: 40,
@@ -204,7 +224,7 @@ class AppShell extends StatelessWidget {
 
   Widget _buildBottomItem(int index) {
     final _ShellDestination destination = _destinations[index];
-    final bool selected = navigationShell.currentIndex == index;
+    final bool selected = widget.navigationShell.currentIndex == index;
 
     return Expanded(
       child: FbPressFeedback(

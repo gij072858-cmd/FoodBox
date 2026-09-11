@@ -180,7 +180,7 @@ class _FbPressFeedbackState extends State<FbPressFeedback> {
           _isPressed ? widget.pressedScale : 1,
           _isPressed ? widget.pressedScale : 1,
           1,
-        )..translateByDouble(0, _isPressed ? widget.pressedY : 0, 0, 0),
+        )..translateByDouble(0, _isPressed ? widget.pressedY : 0, 0, 1),
         transformAlignment: Alignment.center,
         child: widget.child,
       ),
