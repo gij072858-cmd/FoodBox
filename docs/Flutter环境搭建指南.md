@@ -172,6 +172,7 @@ flutter run -d <你的设备 id>
 |---|---|---|
 | `pub get` 卡住 / 超时 | 没配镜像或网络问题 | 回到第二节第 3 步配 `PUB_HOSTED_URL` |
 | 各种莫名其妙的构建错误 | 工程路径含中文 / 空格 | 换到纯英文路径重新克隆 |
+| `flutter analyze` 直接崩溃退出，报 <br>`Unhandled exception` + `FormatException: Unterminated string` | **已知 Flutter 工具缺陷**（2026-09-11 组长实测确认）：分析服务器解析含中文路径的 JSON 消息时崩溃，发生在代码被检查之前，**不是你的代码问题**——`flutter test` 能全绿即可证明 | 改用 `dart analyze`：读的是**同一份** `analysis_options.yaml`（含 flutter_lints 与项目规则），检出结果完全等同；根治办法是把工程迁到纯英文路径 |
 | `flutter doctor` 说 Android licenses 未接受 | 没装 Command-line Tools | SDK Manager 里补装后 `flutter doctor --android-licenses` |
 | Windows 端构建报缺少 C++ 工具链 | Visual Studio 没勾「使用 C++ 的桌面开发」 | 打开 VS Installer → 修改 → 勾上 |
 | `dart run build_runner build` 报 <br>`Unable to write file: ...build.dart.aot` | 本机 AOT 编译产物写入失败（杀软 / 权限 / 路径） | 加参数改为 JIT 模式：<br>`dart run build_runner build --force-jit`（**组内统一用这条**） |
@@ -192,7 +193,8 @@ flutter run -d <device-id>      # 跑安卓端
 flutter devices                 # 看有哪些设备
 
 # 质量自查（推送前必须跑，三条全过才推）
-flutter analyze                 # 静态检查（本机路径含中文报错时，改用 dart analyze）
+flutter analyze                 # 静态检查（中文路径下会崩溃，属已知工具缺陷，见第六节；等效替代 dart analyze）
+dart analyze                    # flutter analyze 崩溃时的替代，结果完全等同
 flutter test                    # 单元测试 / 组件测试
 dart format .                   # 统一代码格式
 

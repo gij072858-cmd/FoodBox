@@ -2,7 +2,7 @@
 
 > 像网易云用歌单管理音乐一样，食匣用「库—菜式—时序」管理你的厨房。
 
-**当前阶段：W1 地基周（空壳 App 双端可跑）**
+**当前阶段：W2 组件与数据周（W1 地基已完成：双端空壳可跑 + 设计系统组件库）**
 
 ---
 
@@ -67,14 +67,14 @@ FoodBox/
 └── .github/                # PR 模板、工作流
 ```
 
-★ 为共享区：改动必须在 PR 标题加 `[shared]` 并在群里同步。
+★ 为共享区：改动必须在提交说明加 `[shared]` 并在群里同步。
 
 ---
 
 ## 开发命令
 
 ```bash
-flutter analyze                              # 静态检查
+dart analyze                                # 静态检查（工程路径含中文时 flutter analyze 会崩，用这条等同替代）
 flutter test                                 # 测试
 dart format .                                # 格式化
 dart run build_runner build --force-jit      # 改表结构后重新生成数据库代码
@@ -97,10 +97,9 @@ dart run build_runner build --force-jit      # 改表结构后重新生成数据
 
 ## 协作规矩（摘要）
 
-- `main` 受保护，仅组长合并；`dev` 每晚保持可运行；个人分支 `feature/<模块>-<简述>`；
-- **不直接提交 `main` / `dev`**，一律提 PR 到 `dev`；
+- `main` 受保护，仅组长在里程碑验收后合并；`dev` 每晚保持可运行；个人分支 `feature/<模块>-<简述>`（可选）；
+- **日常改动直接 push 到 `dev`（免 PR）**；改动较大容易弄崩别人时才开功能分支；
 - 提交信息用 Conventional Commits：`feat(pantry): …` / `fix(recipe): …` / `docs: …`；
-- PR 必填「① 改了什么 ② 怎么自测的」；
 - 不用 force push，不提交密钥与大文件。
 
 详见 [`docs/GitHub协作指南.md`](docs/GitHub协作指南.md)。
