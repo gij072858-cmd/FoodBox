@@ -5,6 +5,9 @@
 .workbuddy/
 *.iml
 
+# 本地录入辅助工具（单人使用，不入库）
+docs/tools/
+
 # ---- 操作系统 ----
 .DS_Store
 Thumbs.db
