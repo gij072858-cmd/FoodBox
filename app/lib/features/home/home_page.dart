@@ -10,8 +10,8 @@ import 'pages/schedule_tab_page.dart';
 /// 首页（构想 2.1）
 ///
 /// 结构：
-///   - AppBar：顶部二级 Tab「库 / 菜式 / 时序」（激活项加粗 + 3px 品牌红圆角下划线）
-///             + 右上角搜索图标（全局搜索食材 / 调料 / 菜式）与「+」快捷录入；
+///   - AppBar：毛玻璃质感，顶部二级 Tab「库 / 菜式 / 时序」；
+///             右上角搜索图标与「+」快捷录入；
 ///   - Body：TabBarView，支持左右滑动切换（构想 2.1 手势要求）。
 ///
 /// 说明：二级 Tab 采用页内 TabController 而非独立路由 ——
@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: FBColor.background,
         appBar: AppBar(
-          backgroundColor: FBColor.surface,
+          backgroundColor: Colors.transparent,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           scrolledUnderElevation: 0,
@@ -37,22 +37,6 @@ class HomePage extends StatelessWidget {
           title: const TabBar(
             isScrollable: true,
             tabAlignment: TabAlignment.start,
-            labelColor: FBColor.textPrimary,
-            unselectedLabelColor: FBColor.textSecondary,
-            labelStyle: TextStyle(
-              fontSize: FBText.bodyMax,
-              fontWeight: FontWeight.bold,
-            ),
-            unselectedLabelStyle: TextStyle(
-              fontSize: FBText.bodyMax,
-              fontWeight: FontWeight.w500,
-            ),
-            indicatorSize: TabBarIndicatorSize.label,
-            indicator: UnderlineTabIndicator(
-              borderSide: BorderSide(color: FBColor.brand, width: 3),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(3)),
-            ),
-            indicatorPadding: EdgeInsets.only(bottom: 4),
             tabs: <Widget>[
               Tab(text: '库'),
               Tab(text: '菜式'),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/theme.dart';
+import 'fb_card.dart';
 
 /// 脚手架占位组件（W1 临时件）
 ///
@@ -50,8 +51,8 @@ class FbPlaceholder extends StatelessWidget {
                 child: Container(
                   width: 64,
                   height: 64,
-                  decoration: BoxDecoration(
-                    color: FBColor.brand.withValues(alpha: 0.08),
+                  decoration: const BoxDecoration(
+                    color: FBColor.brandLight,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(icon, color: FBColor.brand, size: 30),
@@ -59,10 +60,10 @@ class FbPlaceholder extends StatelessWidget {
               ),
               const SizedBox(height: FBSpace.section),
               Text(title, style: FBTextStyle.h2),
-              const SizedBox(height: 8),
+              const SizedBox(height: FBSpace.xs),
               Wrap(
-                spacing: 8,
-                runSpacing: 8,
+                spacing: FBSpace.xs,
+                runSpacing: FBSpace.xs,
                 children: <Widget>[
                   _Chip(text: '负责人 $owner'),
                   _Chip(text: '计划交付 $milestone'),
@@ -71,24 +72,16 @@ class FbPlaceholder extends StatelessWidget {
               ),
               if (points.isNotEmpty) ...<Widget>[
                 const SizedBox(height: FBSpace.section),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(FBSpace.page),
-                  decoration: const BoxDecoration(
-                    color: FBColor.surface,
-                    borderRadius: FBRadius.cardAll,
-                    border: Border.fromBorderSide(
-                      BorderSide(color: FBColor.divider),
-                    ),
-                  ),
+                FbCard(
+                  padding: FBSpace.pageAll,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      const Text('本页待实现要点', style: FBTextStyle.caption),
-                      const SizedBox(height: 8),
+                      Text('本页待实现要点', style: FBTextStyle.caption),
+                      const SizedBox(height: FBSpace.sm),
                       ...points.map(
                         (String point) => Padding(
-                          padding: const EdgeInsets.only(bottom: 6),
+                          padding: const EdgeInsets.only(bottom: FBSpace.xs),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
@@ -118,7 +111,7 @@ class FbPlaceholder extends StatelessWidget {
                 ),
               ],
               const SizedBox(height: FBSpace.section),
-              const Text(
+              Text(
                 '页面骨架已就位：路由、主题常量、目录归属均已接入，'
                 '正文内容按上方计划直接填充即可。',
                 style: FBTextStyle.micro,
@@ -140,10 +133,9 @@ class _Chip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         borderRadius: FBRadius.pillAll,
-        border: Border.all(color: FBColor.divider),
-        color: FBColor.surface,
+        color: FBColor.fill,
       ),
       child: Text(text, style: FBTextStyle.micro),
     );

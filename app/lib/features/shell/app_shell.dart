@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme.dart';
+import '../../widgets/fb_glass_container.dart';
 
 /// 底部导航承载壳（构想 2.1）
 ///
 /// - 极简三段式「首页 / 动态 / 我的」，无描边；
 /// - 图标线性，激活态实心加粗、文字加粗；
+/// - 底部导航与宽屏 NavigationRail 均采用 Apple 毛玻璃质感；
 /// - 宽屏（≥ [FBBreakpoint.wide]）按构想 2.7 自动转为左侧 NavigationRail。
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.navigationShell});
@@ -59,36 +61,35 @@ class AppShell extends StatelessWidget {
       backgroundColor: FBColor.background,
       body: Row(
         children: <Widget>[
-          NavigationRail(
-            backgroundColor: FBColor.surface,
-            selectedIndex: navigationShell.currentIndex,
-            onDestinationSelected: _goBranch,
-            labelType: NavigationRailLabelType.all,
-            indicatorColor: FBColor.brand.withValues(alpha: 0.12),
-            selectedIconTheme: const IconThemeData(color: FBColor.brand),
-            unselectedIconTheme: const IconThemeData(
-              color: FBColor.textSecondary,
+          FbGlassContainer(
+            borderRadius: BorderRadius.zero,
+            child: NavigationRail(
+              backgroundColor: Colors.transparent,
+              selectedIndex: navigationShell.currentIndex,
+              onDestinationSelected: _goBranch,
+              labelType: NavigationRailLabelType.all,
+              indicatorColor: FBColor.brandLight,
+              selectedIconTheme: const IconThemeData(color: FBColor.brand),
+              unselectedIconTheme: const IconThemeData(
+                color: FBColor.textSecondary,
+              ),
+              selectedLabelTextStyle: FBTextStyle.micro.copyWith(
+                fontWeight: FontWeight.w600,
+                color: FBColor.brand,
+              ),
+              unselectedLabelTextStyle: FBTextStyle.micro,
+              destinations: _destinations
+                  .map(
+                    (_ShellDestination d) => NavigationRailDestination(
+                      icon: Icon(d.icon),
+                      selectedIcon: Icon(d.activeIcon),
+                      label: Text(d.label),
+                    ),
+                  )
+                  .toList(growable: false),
             ),
-            selectedLabelTextStyle: const TextStyle(
-              fontSize: FBText.micro,
-              fontWeight: FontWeight.bold,
-              color: FBColor.brand,
-            ),
-            unselectedLabelTextStyle: const TextStyle(
-              fontSize: FBText.micro,
-              color: FBColor.textSecondary,
-            ),
-            destinations: _destinations
-                .map(
-                  (_ShellDestination d) => NavigationRailDestination(
-                    icon: Icon(d.icon),
-                    selectedIcon: Icon(d.activeIcon),
-                    label: Text(d.label),
-                  ),
-                )
-                .toList(growable: false),
           ),
-          const VerticalDivider(width: 1, color: FBColor.divider),
+          const VerticalDivider(width: 1, color: FBColor.separator),
           Expanded(child: navigationShell),
         ],
       ),
@@ -97,15 +98,15 @@ class AppShell extends StatelessWidget {
 
   /// 手机端：极简三段式底部 TabBar
   Widget _buildBottomBar() {
-    return Container(
-      decoration: const BoxDecoration(
-        color: FBColor.surface,
-        border: Border(top: BorderSide(color: FBColor.divider)),
+    return FbGlassContainer(
+      borderRadius: BorderRadius.zero,
+      border: const Border(
+        top: BorderSide(color: FBColor.separator, width: 0.5),
       ),
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: 56,
+          height: 60,
           child: Row(
             children: List<Widget>.generate(
               _destinations.length,
@@ -123,19 +124,23 @@ class AppShell extends StatelessWidget {
     final Color color = selected ? FBColor.brand : FBColor.textSecondary;
 
     return Expanded(
-      child: InkWell(
+      child: GestureDetector(
         key: Key('bottom-nav-$index'),
         onTap: () => _goBranch(index),
+        behavior: HitTestBehavior.opaque,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(selected ? destination.activeIcon : destination.icon, size: 22, color: color),
+            Icon(
+              selected ? destination.activeIcon : destination.icon,
+              size: FBIcon.nav,
+              color: color,
+            ),
             const SizedBox(height: 2),
             Text(
               destination.label,
-              style: TextStyle(
-                fontSize: FBText.micro,
-                fontWeight: selected ? FontWeight.bold : FontWeight.w500,
+              style: FBTextStyle.micro.copyWith(
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
                 color: color,
               ),
             ),

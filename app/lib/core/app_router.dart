@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/feed/feed_page.dart';
@@ -35,6 +35,8 @@ abstract final class AppRoutes {
 /// 保证「在库页面深入几层后切到我的，再切回来位置还在」。
 /// 首页顶部的「库 / 菜式 / 时序」是页内二级 Tab（TabBarView，支持横滑），
 /// 不单独占路由 —— 具体菜式、条目详情等由各模块后续按 [AppRoutes] 追加。
+///
+/// 转场统一使用 [CupertinoPage]，提供 iOS 风格的横向滑动返回。
 GoRouter createAppRouter({String initialLocation = AppRoutes.home}) {
   return GoRouter(
     initialLocation: initialLocation,
@@ -52,14 +54,14 @@ GoRouter createAppRouter({String initialLocation = AppRoutes.home}) {
             routes: <RouteBase>[
               GoRoute(
                 path: AppRoutes.home,
-                builder: (BuildContext context, GoRouterState state) =>
-                    const HomePage(),
+                pageBuilder: (BuildContext context, GoRouterState state) =>
+                    const CupertinoPage<void>(child: HomePage()),
                 routes: <RouteBase>[
                   GoRoute(
                     // 相对路径父路径拼接 → /home/search
                     path: 'search',
-                    builder: (BuildContext context, GoRouterState state) =>
-                        const SearchPage(),
+                    pageBuilder: (BuildContext context, GoRouterState state) =>
+                        const CupertinoPage<void>(child: SearchPage()),
                   ),
                 ],
               ),
@@ -69,8 +71,8 @@ GoRouter createAppRouter({String initialLocation = AppRoutes.home}) {
             routes: <RouteBase>[
               GoRoute(
                 path: AppRoutes.feed,
-                builder: (BuildContext context, GoRouterState state) =>
-                    const FeedPage(),
+                pageBuilder: (BuildContext context, GoRouterState state) =>
+                    const CupertinoPage<void>(child: FeedPage()),
               ),
             ],
           ),
@@ -78,8 +80,8 @@ GoRouter createAppRouter({String initialLocation = AppRoutes.home}) {
             routes: <RouteBase>[
               GoRoute(
                 path: AppRoutes.profile,
-                builder: (BuildContext context, GoRouterState state) =>
-                    const ProfilePage(),
+                pageBuilder: (BuildContext context, GoRouterState state) =>
+                    const CupertinoPage<void>(child: ProfilePage()),
               ),
             ],
           ),
