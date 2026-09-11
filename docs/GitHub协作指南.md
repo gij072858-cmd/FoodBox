@@ -44,15 +44,15 @@ cd FoodBox
 | push（推送）         | 把你电脑上的快照上传到 GitHub       |
 | pull（拉取）         | 把别人上传到 GitHub 的新快照下载到你电脑 |
 | branch（分支）       | 平行世界：你在自己的分支随便改，不影响别人    |
-| PR（Pull Request） | "我改完了，请审核并合并进公共分支"的申请单   |
+| PR（Pull Request） | "我改完了，请审核并合并进公共分支"的申请单（本项目日常直推 dev，**PR 仅保留给较大的功能分支合并**） |
 | merge（合并）        | 把分支的改动并入目标分支             |
 
 **本项目只有两条长期分支**：
 
-- `main`：稳定版，只有组长能合并，每周五更新一次；
-- `dev`：集成分支，所有人的工作最终汇到这里，每晚必须保持可运行。
+- `main`：稳定版，**只有组长能把 dev 合并进来**，验收通过才并；
+- `dev`：集成分支，所有人的工作直接提交到这里，每晚必须保持可运行。
 
-**你永远不直接往 `main` 和 `dev` 上提交代码**，你自己的改动永远写在功能分支上。
+> **协作方式（v1.4 起）**：日常改动**直接推到 `dev`**，不需要功能分支、不需要提 PR。只有当你改的是"较大、容易弄崩别人"的东西时，才开一个功能分支，写完合并回 dev。
 
 ---
 
@@ -65,15 +65,20 @@ git checkout dev
 git pull
 ```
 
-### 第 2 步：从 dev 切一个自己的功能分支
-
-命名规则：`feature/<模块>-<简述>`，模块用英文：pantry（库）/ recipe（菜式）/ schedule（时序）/ feed（动态）/ profile（我的）/ widgets（组件）。
+### 第 2 步：确认自己在 dev 上（日常直推，不用开功能分支）
 
 ```powershell
-git checkout -b feature/pantry-card-list
+git checkout dev
+git pull
 ```
 
-> 一个分支只做一件事（一个功能或一个修复）。做完合并后再切下一个。
+> 日常改动**就在 dev 上直接做**。只在改动较大、容易弄崩别人时才开功能分支：
+>
+> ```powershell
+> git checkout -b feature/pantry-card-list   # 命名 feature/<模块>-<简述>
+> ```
+
+> 一个分支只做一件事（一个功能或一个修复）。做完合并回 dev 后删掉它。
 
 ### 第 3 步：写代码，勤提交
 
@@ -92,35 +97,34 @@ git commit -m "feat(pantry): 库页面双分区布局"
 
 - 类型：`feat`（新功能）/ `fix`（修 bug）/ `docs`（文档）/ `style`（格式样式）/ `refactor`（重构）/ `test`（测试）
 - 说明用中文，一句话讲清做了什么
+- **改过共享区文件（`core/`、`data/`、`widgets/`、`接口约定.md`）必须在提交说明里加 `[shared]`**，并先在群里说一声
 
 示例：`fix(recipe): 修复长菜名详情页溢出问题`、`docs: 更新接口约定`
 
-### 第 4 步：推送到 GitHub
+### 第 4 步：推送到 GitHub（直推 dev）
 
 ```powershell
-git push -u origin feature/pantry-card-list
+git push
 ```
 
-（同一个分支第二次推送起，直接 `git push` 即可）
+（第一次推某个分支时用 `git push -u origin dev`。之后直接 `git push` 即可）
 
-### 第 5 步：在 GitHub 网页上提 PR
+**只有组长把 dev 合进 main**。你**永远不推 `main`**。
 
-1. 打开仓库页面，GitHub 会提示你刚推送的分支，点 **Compare & pull request**；
-2. 确认合并方向：**你的分支 → `dev`**（千万别选成 main！）；
-3. 标题写清改动，**改过共享区文件（`core/`、`data/`、`widgets/`）必须在标题加 `[shared]`**；
-4. 描述里填两条：① 改了什么 ② 怎么自测的（附截图更好）；
-5. 点 Create，然后把 PR 链接发群里 @组长 求 Review。
+### 第 5 步：如果你开了功能分支，合并回 dev
 
-### 第 6 步：Review 与合并
-
-- 组长 Review 后如有意见，在 PR 里会留评论；你在**原分支**继续改、继续 push，PR 会自动更新；
-- 通过后组长合并。合并完成后你可以删掉本地分支开下一个：
+直推派可跳过本步。开了 `feature/...` 的，写完这样合并回 dev：
 
 ```powershell
 git checkout dev
 git pull
-git branch -d feature/pantry-card-list
+git merge feature/pantry-card-list     # 把功能分支并入 dev
+git push                                # 推送，完成合回
+git branch -d feature/pantry-card-list  # 删掉用过的功能分支
 ```
+
+> 如果合并时报冲突，别慌，跳到第 5 章的"冲突自救"。
+> **也不要推 main**。dev 合 main 是组长的事，你 push main 会被 GitHub 拒绝（main 受保护）。
 
 ---
 
@@ -132,7 +136,7 @@ lib/features/<你的模块>/                       ← 你的自留地，自由�
 ```
 
 - 改共享区文件之前，先群里说一声"我要改 XX 了"，避免和别人撞车；
-- PR 标题加 `[shared]`，合并后组长会在群里广播，其他人尽快 `git pull`；
+- 提交说明里加 `[shared]` 前缀，push 后在群里广播一声，其他人尽快 `git pull`；
 - 拿不准某个文件算不算共享区 → 问组长。
 
 ---
@@ -185,7 +189,7 @@ git commit -m "merge: 解决与 dev 的冲突"
 
 - **每天**：开工 `pull` → 收工 `push`（当天代码当天上云，电脑坏了也不丢）；
 - **隔日**：更新 GitHub Projects 看板卡片状态；
-- **周五组会前**：你的 PR 必须已提交（留给 Review 时间），看板必须最新；
+- **周五组会前**：把你的改动 push 到 dev（留给组长 Review 与验收时间），看板必须最新；
 - **周五晚**：组长把 `dev` 合入 `main` 打 tag，全组验收录屏。
 
 ## 九、命令速查（收藏本页）
