@@ -54,7 +54,7 @@ class FbListTile extends StatelessWidget {
               ],
             ),
           ),
-          if (trailing != null) trailing!,
+          ?trailing,
           if (showChevron && trailing == null)
             const Icon(
               Icons.chevron_right_rounded,

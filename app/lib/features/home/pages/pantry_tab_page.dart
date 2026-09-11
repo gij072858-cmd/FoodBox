@@ -93,7 +93,7 @@ class PantryTabPage extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
               itemCount: 6,
-              separatorBuilder: (_, __) => const SizedBox(width: FBSpace.sm),
+              separatorBuilder: (_, _) => const SizedBox(width: FBSpace.sm),
               itemBuilder: (BuildContext context, int index) {
                 final List<String> names = <String>[
                   '蔬菜', '水果', '肉禽', '海鲜', '蛋奶', '主食',

@@ -60,7 +60,7 @@ class FbCard extends StatelessWidget {
                 fit: StackFit.expand,
                 children: <Widget>[
                   image!,
-                  if (imageOverlay != null) imageOverlay!,
+                  ?imageOverlay,
                   Padding(padding: padding, child: child),
                 ],
               )

@@ -25,7 +25,7 @@ class FbSectionHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
             Text(title, style: FBTextStyle.h2),
-            if (trailing != null) trailing!,
+            ?trailing,
           ],
       ),
     );
